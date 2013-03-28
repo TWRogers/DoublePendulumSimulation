@@ -1,0 +1,27 @@
+/*
+ * void gnuplot() : function to create a gnuplot script file from the output data files. Then uses the system to run script. 
+ * gnuplot script file is then deleted. Plots both the angular frequency and the angle as a function of t'
+ */
+
+void gnuPlot()
+{
+  std::string systemDirCommand = "mkdir -p ./" + m_plotDir;
+  std::system(systemDirCommand.c_str());
+  std::ofstream plotfile;
+  plotfile.open("tempPlot.gnu");
+  plotfile << "set term postscript enhanced color font \"Times-Roman,12\"" << "\n";
+  plotfile << "set output './" + m_plotDir + "/" + m_fileName << "\n";
+  plotfile << "set size ratio 0.5" << "\n";
+  plotfile << "set title \"" << m_solutionType << ", {/Symbol g} = " << m_gamma << ", h = " << m_h << "\"" << "\n";
+  plotfile << "set key left" << "\n";
+  plotfile << "set y2tics nomirror" << "\n";
+  plotfile << "set ytics nomirror" << "\n";
+  plotfile << "set xlabel \"t'\" font \"Times-Roman,20\"" << "\n";
+  plotfile << "set ylabel \"u\" font \"Times-Roman,20\"" << "\n";
+  plotfile << "set y2label \"v\" font \"Times-Roman,20\"" << "\n";
+  plotfile << "plot \"./data/" + m_fileName + "\" using 1:2 with lines axis x1y1 title \"u\", \\" << "\n";
+  plotfile << "     \"./data/" + m_fileName + "\" using 1:3 with lines axis x1y2 title \"v\"";
+  plotfile.close();
+  std::system("gnuplot \"tempPlot.gnu\"");
+  std::system("rm tempPlot.gnu");
+}
